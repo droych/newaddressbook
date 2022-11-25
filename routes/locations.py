@@ -13,17 +13,20 @@ def getlocation(db: Session, location_id: int ):
     return result
 
 
+ 
+@location.get("/")   
+async def heath_check():
     
+    return {"health": True}
 
-
-@location.get("/{id}")
-async def read_data(id: int, db: Session = Depends(get_db)):
+@location.get("/location/{id}")
+async def read_data_id(id: int, db: Session = Depends(get_db)):
         select_statement = select(location_model)
         result = db.execute(select_statement).unique(id).scalar()
         return result
 
-@location.get("/")
-async def read_data(latitude: float, longitude: float, distance_in_km: float, db: Session = Depends(get_db)):
+@location.get("/location")
+async def read_data_distance(latitude: float, longitude: float, distance_in_km: float, db: Session = Depends(get_db)):
     
 
     select_statement = select(location_model).where(func.acos(func.sin(func.radians(latitude)) *
@@ -36,7 +39,7 @@ async def read_data(latitude: float, longitude: float, distance_in_km: float, db
     return result
 
 
-@location.post("/")
+@location.post("/location")
 async def write_data(location : Location,  db: Session = Depends(get_db)):
     create_stmt = insert(location_model).values(**location.dict())
 
@@ -49,7 +52,7 @@ async def write_data(location : Location,  db: Session = Depends(get_db)):
     return getlocation(db,location.id)
 
 
-@location.put("/{locat_id}")
+@location.put("/location/{locat_id}")
 async def update_data(locat_id:int,location: Location, db: Session = Depends(get_db)):
 
   update_stat = update(location_model).where(location_model.id == location.id).values(**location.dict())
@@ -65,7 +68,7 @@ async def update_data(locat_id:int,location: Location, db: Session = Depends(get
 
 
 
-@location.delete("/{locat_id}")
+@location.delete("/location/{locat_id}")
 async def delete_data(locat_id:int, db: Session = Depends(get_db)):
     delete_stat = delete(location_model).where(location_model.id == locat_id)
 
