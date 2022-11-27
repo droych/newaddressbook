@@ -13,12 +13,13 @@ def getlocation(db: Session, location_id: int ):
     return result
 
 
- 
 @location.get("/")   
 async def heath_check():
     
     return {"health": True}
 
+
+#get location
 @location.get("/location/{id}")
 async def read_data_id(id: int, db: Session = Depends(get_db)):
         select_statement = select(location_model)
